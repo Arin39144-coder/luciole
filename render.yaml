@@ -1,0 +1,31 @@
+# render.yaml
+services:
+  - type: web
+    name: luciole-backend
+    runtime: python
+    repo: https://github.com/votre-username/luciole  # À adapter
+    branch: main
+    plan: free
+    buildCommand: |
+      cd backend
+      pip install -r requirements.txt
+    startCommand: |
+      cd backend
+      gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 run:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: mysql+pymysql://USER:PASSWORD@HOST:PORT/DEFAULTDB?ssl_ca=/etc/ssl/certs/ca-certificates.crt
+        # ⚠️ À remplacer par l'URL Aiven (voir ci-dessous)
+      - key: CORS_ORIGINS
+        value: https://votre-dashboard.vercel.app,chrome-extension://VOTRE_EXTENSION_ID
+        # Pour le développement, mettre http://localhost:8000 etc.
+      - key: DASHBOARD_URL
+        value: https://votre-dashboard.vercel.app  # ou l'URL où vous hébergez le dashboard (si séparé)
+      - key: PYTHONUNBUFFERED
+        value: "1"

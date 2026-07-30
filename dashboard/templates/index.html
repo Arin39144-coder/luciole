@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<section class="text-center py-16">
+  <div class="inline-block text-5xl mb-4">✦</div>
+  <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
+    Luciole
+  </h1>
+  <p class="text-xl text-slate-400 max-w-2xl mx-auto mb-8">
+    Votre compagnon numérique pour un usage plus réfléchi des intelligences artificielles.
+    Prenez un instant avant chaque session — pas un bloqueur, un moment de conscience.
+  </p>
+  <div class="flex gap-4 justify-center flex-wrap">
+    <a href="/register" class="px-6 py-3 bg-luciole-500 hover:bg-luciole-600 text-slate-950 font-bold rounded-xl transition">
+      Commencer gratuitement
+    </a>
+    <a href="/login" class="px-6 py-3 border border-slate-700 hover:border-luciole-500 text-slate-300 rounded-xl transition">
+      Se connecter
+    </a>
+  </div>
+</section>
+
+<section class="grid md:grid-cols-3 gap-6 py-12">
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <div class="text-2xl mb-3">🪞</div>
+    <h3 class="font-bold text-lg mb-2">Moment de réflexion</h3>
+    <p class="text-slate-400 text-sm">Un overlay doux avant chaque accès à ChatGPT, Claude, Gemini et plus.</p>
+  </div>
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <div class="text-2xl mb-3">📊</div>
+    <h3 class="font-bold text-lg mb-2">Statistiques détaillées</h3>
+    <p class="text-slate-400 text-sm">Suivez votre temps, vos sessions et votre score de réflexion.</p>
+  </div>
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <div class="text-2xl mb-3">🏆</div>
+    <h3 class="font-bold text-lg mb-2">Défis & badges</h3>
+    <p class="text-slate-400 text-sm">Gamification bienveillante pour ancrer de meilleures habitudes.</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Profil{% endblock %}
+
+{% block navlinks %}
+<a href="/dashboard" class="text-slate-400 hover:text-luciole-400">Dashboard</a>
+<a href="/history" class="text-slate-400 hover:text-luciole-400">Historique</a>
+<a href="/challenges" class="text-slate-400 hover:text-luciole-400">Défis</a>
+<a href="/profile" class="text-luciole-400 font-medium">Profil</a>
+<button id="logout-btn" class="text-slate-500 hover:text-red-400">Déconnexion</button>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Mon profil</h1>
+
+<div class="grid md:grid-cols-2 gap-6">
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <h2 class="font-semibold mb-4">Informations</h2>
+    <dl class="space-y-3 text-sm">
+      <div class="flex justify-between">
+        <dt class="text-slate-400">Nom d'utilisateur</dt>
+        <dd id="profile-username" class="font-medium">—</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-slate-400">Email</dt>
+        <dd id="profile-email" class="font-medium">—</dd>
+      </div>
+      <div class="flex justify-between">
+        <dt class="text-slate-400">Membre depuis</dt>
+        <dd id="profile-created" class="font-medium">—</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+    <h2 class="font-semibold mb-4">Objectif quotidien</h2>
+    <p class="text-slate-400 text-sm mb-4">Définissez votre limite de temps IA par jour (en minutes).</p>
+    <form id="goal-form" class="flex gap-3">
+      <input type="number" id="daily-limit" min="15" max="720" value="120"
+        class="flex-1 px-4 py-2 bg-slate-950 border border-slate-700 rounded-xl focus:border-luciole-500 focus:outline-none">
+      <button type="submit" class="px-4 py-2 bg-luciole-500 text-slate-950 font-bold rounded-xl">Enregistrer</button>
+    </form>
+    <p id="goal-msg" class="text-green-400 text-sm mt-2 hidden"></p>
+  </div>
+</div>
+
+<div class="mt-6 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+  <h2 class="font-semibold mb-4">Badges obtenus</h2>
+  <div id="badges-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+    <p class="text-slate-500 text-sm">Chargement…</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+LucioleAuth.requireAuth();
+
+async function loadProfile() {
+  const user = LucioleAuth.getUser();
+  if (user) {
+    document.getElementById('profile-username').textContent = user.username;
+    document.getElementById('profile-email').textContent = user.email;
+    document.getElementById('profile-created').textContent =
+      new Date(user.created_at).toLocaleDateString('fr-FR');
+  }
+
+  const goal = await LucioleAPI.get('/api/goals');
+  document.getElementById('daily-limit').value = goal.goal.daily_limit;
+
+  const badges = await LucioleAPI.get('/api/challenges/badges');
+  const grid = document.getElementById('badges-grid');
+  if (!badges.badges.length) {
+    grid.innerHTML = '<p class="text-slate-500 text-sm">Aucun badge pour l\'instant. Continuez à réfléchir !</p>';
+  } else {
+    grid.innerHTML = badges.badges.map(b => `
+      <div class="flex items-center gap-3 p-3 bg-slate-950 rounded-xl border border-slate-800">
+        <span class="text-2xl">🏅</span>
+        <div>
+          <p class="font-medium text-sm">${b.badge.name}</p>
+          <p class="text-xs text-slate-500">${b.badge.description}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+document.getElementById('goal-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const limit = parseInt(document.getElementById('daily-limit').value);
+  await LucioleAPI.put('/api/goals', { daily_limit: limit });
+  const msg = document.getElementById('goal-msg');
+  msg.textContent = 'Objectif mis à jour !';
+  msg.classList.remove('hidden');
+  setTimeout(() => msg.classList.add('hidden'), 3000);
+});
+
+loadProfile();
+</script>
+{% endblock %}

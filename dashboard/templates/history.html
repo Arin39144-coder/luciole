@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Historique{% endblock %}
+
+{% block navlinks %}
+<a href="/dashboard" class="text-slate-400 hover:text-luciole-400">Dashboard</a>
+<a href="/history" class="text-luciole-400 font-medium">Historique</a>
+<a href="/challenges" class="text-slate-400 hover:text-luciole-400">Défis</a>
+<a href="/profile" class="text-slate-400 hover:text-luciole-400">Profil</a>
+<button id="logout-btn" class="text-slate-500 hover:text-red-400">Déconnexion</button>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Historique des sessions</h1>
+
+<div class="overflow-x-auto bg-slate-900 border border-slate-800 rounded-2xl">
+  <table class="w-full text-sm">
+    <thead>
+      <tr class="border-b border-slate-800 text-slate-400 text-left">
+        <th class="px-4 py-3 font-medium">Date</th>
+        <th class="px-4 py-3 font-medium">Plateforme</th>
+        <th class="px-4 py-3 font-medium">Durée</th>
+        <th class="px-4 py-3 font-medium">Motif</th>
+        <th class="px-4 py-3 font-medium">IA nécessaire</th>
+      </tr>
+    </thead>
+    <tbody id="history-body">
+      <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">Chargement…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="pagination" class="flex justify-center gap-2 mt-4"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+LucioleAuth.requireAuth();
+
+const REASON_LABELS = {
+  etudes: 'Études', travail: 'Travail', programmation: 'Programmation',
+  recherche: 'Recherche', creativite: 'Créativité', divertissement: 'Divertissement', autre: 'Autre'
+};
+const NEEDS_LABELS = { yes: 'Oui', no: 'Non', partially: 'Partiellement' };
+
+let currentPage = 1;
+
+async function loadHistory(page = 1) {
+  const data = await LucioleAPI.get(`/api/session/history?page=${page}&per_page=15`);
+  const tbody = document.getElementById('history-body');
+
+  if (!data.sessions.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500">Aucune session enregistrée.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.sessions.map(s => `
+    <tr class="border-b border-slate-800/50 hover:bg-slate-800/30">
+      <td class="px-4 py-3">${new Date(s.start_time).toLocaleString('fr-FR')}</td>
+      <td class="px-4 py-3">${s.platform || '—'}</td>
+      <td class="px-4 py-3">${s.duration_minutes != null ? s.duration_minutes + ' min' : '—'}</td>
+      <td class="px-4 py-3">${REASON_LABELS[s.reason] || s.reason || '—'}</td>
+      <td class="px-4 py-3">${NEEDS_LABELS[s.needs_ai] || s.needs_ai || '—'}</td>
+    </tr>
+  `).join('');
+
+  const pag = document.getElementById('pagination');
+  pag.innerHTML = '';
+  for (let i = 1; i <= data.pages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = `px-3 py-1 rounded-lg text-sm ${i === page ? 'bg-luciole-500 text-slate-950' : 'bg-slate-800 text-slate-400'}`;
+    btn.onclick = () => { currentPage = i; loadHistory(i); };
+    pag.appendChild(btn);
+  }
+}
+
+loadHistory();
+</script>
+{% endblock %}

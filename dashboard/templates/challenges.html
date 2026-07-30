@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Défis{% endblock %}
+
+{% block navlinks %}
+<a href="/dashboard" class="text-slate-400 hover:text-luciole-400">Dashboard</a>
+<a href="/history" class="text-slate-400 hover:text-luciole-400">Historique</a>
+<a href="/challenges" class="text-luciole-400 font-medium">Défis</a>
+<a href="/profile" class="text-slate-400 hover:text-luciole-400">Profil</a>
+<button id="logout-btn" class="text-slate-500 hover:text-red-400">Déconnexion</button>
+{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Défis & Gamification</h1>
+<p class="text-slate-400 text-sm mb-6">Relevez des défis pour ancrer de meilleures habitudes numériques.</p>
+
+<div id="challenges-list" class="grid md:grid-cols-2 gap-4">
+  <p class="text-slate-500">Chargement…</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+LucioleAuth.requireAuth();
+
+async function loadChallenges() {
+  const data = await LucioleAPI.get('/api/challenges');
+  const list = document.getElementById('challenges-list');
+
+  list.innerHTML = data.challenges.map(c => `
+    <div class="bg-slate-900 border ${c.completed ? 'border-green-700' : 'border-slate-800'} rounded-2xl p-5">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold">${c.title}</h3>
+        <span class="text-xs px-2 py-1 rounded-full ${c.completed ? 'bg-green-900 text-green-300' : 'bg-slate-800 text-slate-400'}">
+          ${c.completed ? '✓ Complété' : c.type}
+        </span>
+      </div>
+      <p class="text-slate-400 text-sm mb-3">${c.description}</p>
+      <p class="text-luciole-400 text-sm font-medium">+${c.reward} pts</p>
+    </div>
+  `).join('');
+}
+
+loadChallenges();
+</script>
+{% endblock %}

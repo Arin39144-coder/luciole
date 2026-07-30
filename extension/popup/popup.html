@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Luciole</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Écran de chargement -->
+    <div id="loading" class="screen">
+      <div class="loader"></div>
+      <p>Chargement…</p>
+    </div>
+
+    <!-- Non connecté -->
+    <div id="auth-screen" class="screen hidden">
+      <div class="header">
+        <span class="logo">✦ Luciole</span>
+        <p class="tagline">Usage conscient de l'IA</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="login">Connexion</button>
+        <button class="tab" data-tab="register">Inscription</button>
+      </div>
+
+      <form id="login-form" class="form">
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Mot de passe" required>
+        <button type="submit" class="btn-primary">Se connecter</button>
+      </form>
+
+      <form id="register-form" class="form hidden">
+        <input type="text" id="register-username" placeholder="Nom d'utilisateur" required minlength="3">
+        <input type="email" id="register-email" placeholder="Email" required>
+        <input type="password" id="register-password" placeholder="Mot de passe (8+ car.)" required minlength="8">
+        <button type="submit" class="btn-primary">S'inscrire</button>
+      </form>
+
+      <p id="auth-error" class="error hidden"></p>
+
+      <div class="welcome-msg">
+        <p>Bienvenue ! Luciole vous aide à prendre conscience de votre utilisation des IA.</p>
+      </div>
+    </div>
+
+    <!-- Connecté -->
+    <div id="dashboard-screen" class="screen hidden">
+      <div class="header">
+        <span class="logo">✦ Luciole</span>
+        <button id="logout-btn" class="btn-icon" title="Déconnexion">↩</button>
+      </div>
+
+      <p class="greeting">Bonjour, <strong id="username">—</strong></p>
+
+      <div class="score-card">
+        <div class="score-value" id="score-value">—</div>
+        <div class="score-level" id="score-level">—</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-num" id="time-today">0</span>
+          <span class="stat-label">min aujourd'hui</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num" id="sessions-today">0</span>
+          <span class="stat-label">sessions</span>
+        </div>
+      </div>
+
+      <div class="challenge-card" id="challenge-card">
+        <span class="challenge-label">Défi actuel</span>
+        <p id="challenge-title">—</p>
+      </div>
+
+      <button id="open-dashboard" class="btn-primary">Ouvrir le dashboard</button>
+    </div>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
