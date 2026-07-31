@@ -25,11 +25,27 @@
   <nav class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <a href="/" class="flex items-center gap-2 font-bold text-luciole-400 text-lg">
-        <span>✦</span> Luciole
+        <img src="/static/assets/star-animated.gif" alt="Luciole" style="width:48px; height:48px;">
+        Luciole
       </a>
-      <div id="nav-links" class="flex items-center gap-4 text-sm">
+
+      <!-- Liens desktop -->
+      <div id="nav-links" class="hidden md:flex items-center gap-4 text-sm">
         {% block navlinks %}{% endblock %}
       </div>
+
+      <!-- Burger (mobile uniquement) -->
+      <button id="burger-btn" aria-label="Ouvrir le menu" aria-expanded="false"
+        class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 shrink-0">
+        <span class="burger-line block w-6 h-0.5 bg-slate-300 transition-transform duration-300"></span>
+        <span class="burger-line block w-6 h-0.5 bg-slate-300 transition-opacity duration-300"></span>
+        <span class="burger-line block w-6 h-0.5 bg-slate-300 transition-transform duration-300"></span>
+      </button>
+    </div>
+
+    <!-- Menu mobile déroulant : réutilise le même contenu que navlinks -->
+    <div id="mobile-nav-links" class="md:hidden hidden flex-col gap-3 px-4 pb-4 pt-1 border-t border-slate-800 text-sm">
+      {{ self.navlinks() }}
     </div>
   </nav>
   {% endblock %}
@@ -40,6 +56,31 @@
 
   <script src="/static/js/api.js"></script>
   <script src="/static/js/auth.js"></script>
+
+  <script>
+    // Toggle burger menu mobile
+    const burgerBtn = document.getElementById('burger-btn');
+    const mobileNav = document.getElementById('mobile-nav-links');
+
+    burgerBtn.addEventListener('click', () => {
+      const isOpen = mobileNav.classList.contains('hidden');
+      mobileNav.classList.toggle('hidden', !isOpen);
+      mobileNav.classList.toggle('flex', isOpen);
+      burgerBtn.setAttribute('aria-expanded', isOpen);
+      burgerBtn.classList.toggle('burger-open', isOpen);
+    });
+
+    // Ferme le menu si on clique sur un lien ou bouton à l'intérieur
+    mobileNav.querySelectorAll('a, button').forEach((el) => {
+      el.addEventListener('click', () => {
+        mobileNav.classList.add('hidden');
+        mobileNav.classList.remove('flex');
+        burgerBtn.setAttribute('aria-expanded', 'false');
+        burgerBtn.classList.remove('burger-open');
+      });
+    });
+  </script>
+
   {% block scripts %}{% endblock %}
 </body>
 </html>

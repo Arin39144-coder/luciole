@@ -41,7 +41,10 @@
       <div class="luciole-backdrop"></div>
       <div class="luciole-modal" role="dialog" aria-labelledby="luciole-title">
         <div class="luciole-header">
-          <div class="luciole-logo">✦ Luciole</div>
+          <div class="luciole-logo">
+            <img src="${chrome.runtime.getURL('assets/star-animated.gif')}" alt="Luciole" style="width:48px; height:48px; display:inline-block; vertical-align:middle; margin-right:8px;">
+            Luciole
+          </div>
           <div class="luciole-platform">${platform.name}</div>
         </div>
 

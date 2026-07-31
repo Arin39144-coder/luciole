@@ -1,28 +1,68 @@
 /* Luciole Dashboard — Styles complémentaires */
 
+/* Note : @apply retiré — non fonctionnel avec le CDN Tailwind (qui génère les
+   classes à la volée en JS et ne compile pas de CSS externe). On garde
+   uniquement le CSS brut équivalent ci-dessous. */
+
 .stat-card {
-  @apply bg-slate-900 border border-slate-800 rounded-2xl p-5;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 1rem;
+  padding: 1.25rem;
 }
 
 .stat-label {
-  @apply text-slate-400 text-sm mb-1;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
 }
 
 .stat-value {
-  @apply text-3xl font-extrabold;
+  font-size: 1.875rem;
+  font-weight: 800;
 }
 
 .chart-card {
-  @apply bg-slate-900 border border-slate-800 rounded-2xl p-5;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 1rem;
+  padding: 1.25rem;
 }
 
 .chart-title {
-  @apply font-semibold text-sm text-slate-300 mb-4;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
 }
 
-/* Fallback si Tailwind @apply non supporté en CDN */
-.stat-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 1rem; padding: 1.25rem; }
-.stat-label { color: #94a3b8; font-size: 0.875rem; margin-bottom: 0.25rem; }
-.stat-value { font-size: 1.875rem; font-weight: 800; }
-.chart-card { background: #0f172a; border: 1px solid #1e293b; border-radius: 1rem; padding: 1.25rem; }
-.chart-title { font-weight: 600; font-size: 0.875rem; color: #cbd5e1; margin-bottom: 1rem; }
+/* Conteneur à hauteur fixe pour que Chart.js soit correctement responsive
+   (sans ça, un <canvas> seul dans .chart-card grandit sans limite) */
+.chart-wrapper {
+  position: relative;
+  height: 280px;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .chart-wrapper {
+    height: 220px;
+  }
+}
+
+/* ─── Burger menu : animation en croix ─────────────────── */
+#burger-btn .burger-line {
+  transform-origin: center;
+}
+
+#burger-btn.burger-open .burger-line:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+#burger-btn.burger-open .burger-line:nth-child(2) {
+  opacity: 0;
+}
+
+#burger-btn.burger-open .burger-line:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}

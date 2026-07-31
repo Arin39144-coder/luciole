@@ -12,6 +12,24 @@ const chartDefaults = {
   },
 };
 
+// Palette de couleurs étendue pour les plateformes
+const platformColors = [
+  '#f59e0b', // jaune
+  '#3b82f6', // bleu
+  '#10b981', // vert
+  '#8b5cf6', // violet
+  '#ef4444', // rouge
+  '#06b6d4', // cyan
+  '#ec4899', // rose
+  '#84cc16', // vert clair
+  '#f97316', // orange
+  '#14b8a6', // turquoise
+  '#a855f7', // pourpre
+  '#f43f5e', // rose vif
+  '#22d3ee', // bleu clair
+  '#fbbf24', // ambre
+];
+
 async function initDashboard() {
   try {
     const user = LucioleAuth.getUser();
@@ -57,21 +75,33 @@ async function initDashboard() {
       options: chartDefaults,
     });
 
-    // Plateformes
+    // Plateformes - avec palette dynamique
     const platforms = data.dashboard.platforms;
-    new Chart(document.getElementById('platform-chart'), {
-      type: 'doughnut',
-      data: {
-        labels: platforms.map(p => p.name),
-        datasets: [{
-          data: platforms.map(p => p.minutes),
-          backgroundColor: [
-            '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899', '#84cc16',
-          ],
-        }],
-      },
-      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } },
-    });
+    if (platforms && platforms.length > 0) {
+      // Attribue une couleur à chaque plateforme
+      const backgroundColors = platforms.map((_, index) => platformColors[index % platformColors.length]);
+
+      new Chart(document.getElementById('platform-chart'), {
+        type: 'doughnut',
+        data: {
+          labels: platforms.map(p => p.name),
+          datasets: [{
+            data: platforms.map(p => p.minutes),
+            backgroundColor: backgroundColors,
+          }],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#94a3b8' } },
+          },
+        },
+      });
+    } else {
+      // Si aucune plateforme, afficher un message
+      const container = document.getElementById('platform-chart').parentElement;
+      container.innerHTML = `<p class="text-slate-400 text-center py-4">Aucune donnée de plateforme</p>`;
+    }
 
     // Score history
     if (data.score_history.length) {

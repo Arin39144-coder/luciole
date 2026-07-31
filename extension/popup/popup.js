@@ -15,28 +15,20 @@ function showScreen(name) {
   screens[name]?.classList.remove("hidden");
 }
 
+// Supprimez l'ancienne fonction apiRequest qui faisait fetch directement
+// et remplacez-la par :
+
 async function apiRequest(endpoint, options = {}) {
   console.log("apiRequest appelé pour", endpoint);
-  const auth = await browserAPI.runtime.sendMessage({ type: "GET_AUTH" });
-  console.log("auth reçu :", auth);
-  const headers = {
-    "Content-Type": "application/json",
-    ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
-    ...options.headers,
-  };
-  try {
-    const response = await fetch(`${LUCIOLE_CONFIG.API_BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
-    console.log("réponse reçue :", response.status, response.statusText);
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || `Erreur ${response.status}`);
-    return data;
-  } catch (err) {
-    console.error("Erreur dans apiRequest :", err); // ← log important
-    throw err;
+  const result = await browserAPI.runtime.sendMessage({
+    type: "API_REQUEST",
+    data: { endpoint, options }
+  });
+  console.log("Réponse du background :", result);
+  if (!result.success) {
+    throw new Error(result.error);
   }
+  return result.data;
 }
 
 // Tabs connexion / inscription

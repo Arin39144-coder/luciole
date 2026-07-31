@@ -4,17 +4,22 @@
 
 const browserAPI = typeof browser !== "undefined" ? browser : chrome;
 
+// Chargement de la configuration
+importScripts('config.js');
+
 // Suivi des sessions actives { tabId: { sessionId, startTime, platform } }
 const activeSessions = new Map();
 
+// ─── Gestionnaire de messages UNIQUE ──────────────────────────────
 browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
   handleMessage(message, sender).then(sendResponse).catch((err) => {
     console.error("[Luciole]", err);
     sendResponse({ error: err.message });
   });
-  return true;
+  return true; // Réponse asynchrone
 });
 
+// ─── Fonction principale de routage des messages ──────────────────
 async function handleMessage(message, sender) {
   switch (message.type) {
     case "GET_AUTH":
@@ -31,11 +36,14 @@ async function handleMessage(message, sender) {
       return endSession(message.sessionId, sender.tab?.id);
     case "GET_CONFIG":
       return { config: LUCIOLE_CONFIG };
+    case "API_REQUEST":   // ⬅️ NOUVEAU : requêtes HTTP depuis la popup
+      return handleApiRequest(message.data);
     default:
       return { error: "Unknown message type" };
   }
 }
 
+// ─── Gestion de l'authentification ──────────────────────────────
 async function getAuth() {
   const result = await browserAPI.storage.local.get(["token", "user"]);
   return { token: result.token || null, user: result.user || null };
@@ -54,6 +62,7 @@ async function clearAuth() {
   return { success: true };
 }
 
+// ─── Fonction API interne (utilisée par le service worker) ─────
 async function apiRequest(endpoint, options = {}) {
   const auth = await getAuth();
   const headers = {
@@ -74,6 +83,42 @@ async function apiRequest(endpoint, options = {}) {
   return data;
 }
 
+// ─── API pour la popup (via message) ─────────────────────────────
+async function handleApiRequest(data) {
+  const { endpoint, options = {} } = data;
+  const auth = await getAuth();
+  const headers = {
+    "Content-Type": "application/json",
+    ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
+    ...options.headers,
+  };
+  const url = `${LUCIOLE_CONFIG.API_BASE_URL}${endpoint}`;
+  console.log("[Background] Appel API vers", url);
+
+  // Timeout de 10 secondes
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    const responseData = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(responseData.error || `Erreur ${response.status}`);
+    }
+    return { success: true, data: responseData };
+  } catch (err) {
+    clearTimeout(timeoutId);
+    console.error("[Background] Erreur API détaillée :", err.name, err.message);
+    return { success: false, error: err.message };
+  }
+}
+
+// ─── Statistiques ────────────────────────────────────────────────
 async function fetchStats() {
   try {
     const auth = await getAuth();
@@ -85,6 +130,7 @@ async function fetchStats() {
   }
 }
 
+// ─── Gestion des sessions ──────────────────────────────────────
 async function startSession(sessionData, tabId) {
   const auth = await getAuth();
   if (!auth.token) {
@@ -140,7 +186,7 @@ async function endSession(sessionId, tabId) {
   }
 }
 
-// Terminer les sessions quand un onglet se ferme
+// ─── Nettoyage des sessions à la fermeture d'un onglet ──────
 if (browserAPI.tabs && browserAPI.tabs.onRemoved) {
   browserAPI.tabs.onRemoved.addListener(async (tabId) => {
     const session = activeSessions.get(tabId);
@@ -150,7 +196,7 @@ if (browserAPI.tabs && browserAPI.tabs.onRemoved) {
   });
 }
 
-// Alarme pour rappels (optionnel)
+// ─── Alarme de rappel (optionnelle) ──────────────────────────
 browserAPI.alarms?.create("luciole-check", { periodInMinutes: 30 });
 
 browserAPI.alarms?.onAlarm.addListener(async (alarm) => {
