@@ -27,7 +27,7 @@
     "https://www.deepseek.com/*",
     "http://localhost:8000/*",
     "http://127.0.0.1:8000/*",
-    "https://luciole-backend.onrender.com/*",
+    "https://luciole-backend-production-5ffd.up.railway.app/*",
     "https://browbeat-audible-harpist.ngrok-free.dev/*"
   ],
   "background": {

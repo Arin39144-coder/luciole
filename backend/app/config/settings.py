@@ -9,19 +9,11 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
 
     # Base de données : par défaut SQLite pour faciliter le déploiement
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL", "sqlite:///luciole.db"
-    )
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///luciole.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Désactiver les options de pool pour SQLite (non supportées)
-    if not SQLALCHEMY_DATABASE_URI.startswith("sqlite"):
-        SQLALCHEMY_ENGINE_OPTIONS = {
-            "pool_pre_ping": True,
-            "pool_recycle": 300,
-        }
-    else:
-        SQLALCHEMY_ENGINE_OPTIONS = {}
+    # Désactiver toutes les options avancées (compatibles SQLite et MySQL)
+    SQLALCHEMY_ENGINE_OPTIONS = {}
 
     # CORS
     CORS_ORIGINS = [
