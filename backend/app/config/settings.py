@@ -8,14 +8,11 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
 
-    # Base de données : par défaut SQLite pour faciliter le déploiement
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///luciole.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Désactiver toutes les options avancées (compatibles SQLite et MySQL)
-    SQLALCHEMY_ENGINE_OPTIONS = {}
+    # Ne pas définir SQLALCHEMY_ENGINE_OPTIONS, laisser Flask-SQLAlchemy utiliser les defaults
 
-    # CORS
     CORS_ORIGINS = [
         origin.strip()
         for origin in os.getenv(
