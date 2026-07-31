@@ -1,1 +1,1 @@
-https://luciole-backend-production-5ffd.up.railway.app
+luciole-backend-production-5ffd.up.railway.app
