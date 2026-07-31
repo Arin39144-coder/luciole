@@ -10,6 +10,8 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///luciole.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Forcer un dictionnaire vide, même si une variable d'env existe
+    SQLALCHEMY_ENGINE_OPTIONS = {}
 
     CORS_ORIGINS = [
         origin.strip()

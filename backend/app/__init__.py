@@ -26,6 +26,7 @@ def create_app(config_name: str | None = None) -> Flask:
         template_folder=os.path.join(os.path.dirname(__file__), "..", "..", "dashboard", "templates"),
     )
     app.config.from_object(config_by_name[config_name])
+    os.environ.pop('SQLALCHEMY_ENGINE_OPTIONS', None)
     # Forcer un dictionnaire vide pour éviter l'erreur avec SQLAlchemy
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
 
