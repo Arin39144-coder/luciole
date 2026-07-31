@@ -7,20 +7,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ✅ Supprimer toute variable d'environnement qui pourrait interférer
+# 🔥 Supprimer TOUTE variable d'environnement qui pourrait interférer
 os.environ.pop('SQLALCHEMY_ENGINE_OPTIONS', None)
 
+# Création de l'application
 from app import create_app, db
 from app.services.seed_service import seed_initial_data
 
 app = create_app()
 
-# ✅ Forcer explicitement la valeur dans la configuration
+# 🔥 Forcer la valeur dans la configuration de l'app AVANT toute utilisation
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
 
 # Initialisation de la base de données avec gestion d'erreur
 with app.app_context():
     try:
+        # Vérifier que la clé est bien un dictionnaire
+        if not isinstance(app.config.get('SQLALCHEMY_ENGINE_OPTIONS'), dict):
+            app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
+            print("✅ Forcé SQLALCHEMY_ENGINE_OPTIONS à un dictionnaire.")
+
         db.create_all()
         seed_initial_data()
         print("✅ Base de données initialisée avec succès.")
