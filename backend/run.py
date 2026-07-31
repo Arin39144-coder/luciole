@@ -3,22 +3,21 @@ import os
 import pymysql
 pymysql.install_as_MySQLdb()
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-# Supprimer toute variable d'environnement problématique
+# Supprimer la variable d'environnement avant tout
 os.environ.pop('SQLALCHEMY_ENGINE_OPTIONS', None)
+
+from dotenv import load_dotenv
+load_dotenv()
 
 from app import create_app, db
 from app.services.seed_service import seed_initial_data
 
 app = create_app()
 
-# 🔥 Supprimer la clé si elle existe dans la configuration
-app.config.pop('SQLALCHEMY_ENGINE_OPTIONS', None)
+# Vérifier que la clé n'existe pas
+if 'SQLALCHEMY_ENGINE_OPTIONS' in app.config:
+    app.config.pop('SQLALCHEMY_ENGINE_OPTIONS')
 
-# Initialisation de la base de données
 with app.app_context():
     try:
         db.create_all()

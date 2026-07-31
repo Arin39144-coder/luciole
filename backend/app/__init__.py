@@ -1,6 +1,6 @@
+
 """Initialisation de l'application Flask."""
 import os
-
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -12,7 +12,6 @@ from app.config.settings import config_by_name
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
-
 
 def create_app(config_name: str | None = None) -> Flask:
     if config_name is None:
@@ -26,9 +25,9 @@ def create_app(config_name: str | None = None) -> Flask:
         template_folder=os.path.join(os.path.dirname(__file__), "..", "..", "dashboard", "templates"),
     )
     app.config.from_object(config_by_name[config_name])
+
+    # 🔥 Supprimer définitivement la clé problématique
     app.config.pop('SQLALCHEMY_ENGINE_OPTIONS', None)
-    # Forcer la suppression de toute valeur problématique
-    
 
     db.init_app(app)
     migrate.init_app(app, db)
