@@ -1,1 +1,1 @@
-https://browbeat-audible-harpist.ngrok-free.dev
+https://luciole-backend-production-5ffd.up.railway.app
