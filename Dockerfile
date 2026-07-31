@@ -16,4 +16,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 8000
 
 # La commande s'exécute maintenant dans /app/backend
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "--workers", "2", "--timeout", "120", "run:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 run:app"]
