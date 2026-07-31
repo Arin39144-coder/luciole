@@ -26,7 +26,8 @@
     "https://chat.deepseek.com/*",
     "https://www.deepseek.com/*",
     "http://localhost:8000/*",
-    "http://127.0.0.1:8000/*"
+    "http://127.0.0.1:8000/*",
+    "https://luciole-backend.onrender.com/*"
   ],
   "background": {
     "scripts": ["background.js"]

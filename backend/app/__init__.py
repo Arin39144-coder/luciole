@@ -52,7 +52,13 @@ def create_app(config_name: str | None = None) -> Flask:
 
     @app.route("/health")
     def health():
-        return {"status": "ok", "service": "luciole-api"}, 200
+        # Vérification de la connexion à la base de données
+        try:
+            from sqlalchemy import text
+            db.session.execute(text("SELECT 1"))
+            return {"status": "ok", "service": "luciole-api", "db": "connected"}, 200
+        except Exception as e:
+            return {"status": "error", "service": "luciole-api", "db": str(e)}, 500
 
     @app.route("/dashboard/assets/<path:filename>")
     def dashboard_assets(filename):
@@ -61,10 +67,7 @@ def create_app(config_name: str | None = None) -> Flask:
         )
         return send_from_directory(assets_dir, filename)
 
-    with app.app_context():
-        db.create_all()
-        from app.services.seed_service import seed_initial_data
-
-        seed_initial_data()
+    # ⚠️ On retire db.create_all() et seed_initial_data() d'ici
+    # Elles seront appelées dans run.py avec gestion d'erreur
 
     return app

@@ -13,3 +13,28 @@ Luciole est une extension de navigateur (Chrome et Firefox) couplée à un backe
 - **Extension légère** pour Chrome et Firefox (Manifest V3)
 
 ## Architecture
+luciole/
+├── extension/ # Extension Chrome / Firefox
+├── backend/ # API Flask
+├── dashboard/ # Interface web (HTML + Tailwind + Chart.js)
+├── database/ # Schéma MySQL
+├── docker-compose.yml
+├── .env.example
+└── README.md
+
+text
+
+## Prérequis
+
+- Python 3.11+
+- MySQL 8.0 (ou Aiven MySQL)
+- Docker & Docker Compose (optionnel)
+- Navigateur Chrome ou Firefox
+
+## Installation locale
+
+### 1. Cloner le dépôt
+
+```bash
+git clone https://github.com/votre-username/luciole.git
+cd luciole

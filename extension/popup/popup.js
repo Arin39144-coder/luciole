@@ -16,20 +16,27 @@ function showScreen(name) {
 }
 
 async function apiRequest(endpoint, options = {}) {
+  console.log("apiRequest appelé pour", endpoint);
   const auth = await browserAPI.runtime.sendMessage({ type: "GET_AUTH" });
+  console.log("auth reçu :", auth);
   const headers = {
     "Content-Type": "application/json",
     ...(auth.token ? { Authorization: `Bearer ${auth.token}` } : {}),
     ...options.headers,
   };
-
-  const response = await fetch(`${LUCIOLE_CONFIG.API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || `Erreur ${response.status}`);
-  return data;
+  try {
+    const response = await fetch(`${LUCIOLE_CONFIG.API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+    console.log("réponse reçue :", response.status, response.statusText);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `Erreur ${response.status}`);
+    return data;
+  } catch (err) {
+    console.error("Erreur dans apiRequest :", err); // ← log important
+    throw err;
+  }
 }
 
 // Tabs connexion / inscription
@@ -46,6 +53,7 @@ document.querySelectorAll(".tab").forEach((tab) => {
 
 document.getElementById("login-form").addEventListener("submit", async (e) => {
   e.preventDefault();
+  console.log("Tentative de connexion...");
   const errorEl = document.getElementById("auth-error");
   errorEl.classList.add("hidden");
 

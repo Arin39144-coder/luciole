@@ -15,7 +15,7 @@ COPY . .
 
 # Copier l'entrypoint
 COPY entrypoint.sh /entrypoint.sh
-COPY ca.pem /app/ca.pem
+
 RUN chmod +x /entrypoint.sh
 
 ENV FLASK_APP=run.py

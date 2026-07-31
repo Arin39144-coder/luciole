@@ -2,8 +2,8 @@
  * Configuration Luciole — Modifier l'URL API pour la production.
  */
 const LUCIOLE_CONFIG = {
-  API_BASE_URL: "http://localhost:8000",
-  DASHBOARD_URL: "http://localhost:8000/dashboard",
+  API_BASE_URL: "https://luciole-backend.onrender.com",
+  DASHBOARD_URL: "https://luciole-backend.onrender.com",
   OVERLAY_DELAY_MS: 300,
   SESSION_TRACKING_INTERVAL_MS: 60000,
 };
