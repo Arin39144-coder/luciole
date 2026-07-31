@@ -11,8 +11,6 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///luciole.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Ne pas définir SQLALCHEMY_ENGINE_OPTIONS, laisser Flask-SQLAlchemy utiliser les defaults
-
     CORS_ORIGINS = [
         origin.strip()
         for origin in os.getenv(
