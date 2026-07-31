@@ -7,14 +7,23 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-jwt-secret")
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=7)
+
+    # Base de données : par défaut SQLite pour faciliter le déploiement
     SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL", "mysql+pymysql://luciole:luciole_pass@localhost:3306/luciole"
+        "DATABASE_URL", "sqlite:///luciole.db"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,
-        "pool_recycle": 300,
-    }
+
+    # Désactiver les options de pool pour SQLite (non supportées)
+    if not SQLALCHEMY_DATABASE_URI.startswith("sqlite"):
+        SQLALCHEMY_ENGINE_OPTIONS = {
+            "pool_pre_ping": True,
+            "pool_recycle": 300,
+        }
+    else:
+        SQLALCHEMY_ENGINE_OPTIONS = {}
+
+    # CORS
     CORS_ORIGINS = [
         origin.strip()
         for origin in os.getenv(
