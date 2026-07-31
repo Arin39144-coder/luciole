@@ -7,10 +7,16 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# ✅ Supprimer toute variable d'environnement qui pourrait interférer
+os.environ.pop('SQLALCHEMY_ENGINE_OPTIONS', None)
+
 from app import create_app, db
 from app.services.seed_service import seed_initial_data
 
 app = create_app()
+
+# ✅ Forcer explicitement la valeur dans la configuration
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
 
 # Initialisation de la base de données avec gestion d'erreur
 with app.app_context():
