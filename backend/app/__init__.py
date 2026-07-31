@@ -27,7 +27,11 @@ def create_app(config_name: str | None = None) -> Flask:
     app.config.from_object(config_by_name[config_name])
 
     # 🔥 Supprimer définitivement la clé problématique
+    # 🔥 Supprimer définitivement la clé problématique
     app.config.pop('SQLALCHEMY_ENGINE_OPTIONS', None)
+    # Forcer un dictionnaire vide si par miracle la clé existe encore
+    if 'SQLALCHEMY_ENGINE_OPTIONS' in app.config:
+        app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {}
 
     db.init_app(app)
     migrate.init_app(app, db)

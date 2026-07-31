@@ -9,9 +9,15 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///luciole.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # NE PAS DÉFINIR SQLALCHEMY_ENGINE_OPTIONS
 
-    CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:5000,http://127.0.0.1:5000,http://localhost:8000").split(",") if origin.strip()]
+    CORS_ORIGINS = [
+        origin.strip()
+        for origin in os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:5000,http://127.0.0.1:5000,http://localhost:8000",
+        ).split(",")
+        if origin.strip()
+    ]
     DASHBOARD_URL = os.getenv("DASHBOARD_URL", "http://localhost:8000")
 
 class DevelopmentConfig(Config):
