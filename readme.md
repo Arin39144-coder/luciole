@@ -26,11 +26,11 @@ luciole/
 
 text
 
-## Prérequis
-
+## Technologies et matériel 
 - Python 3.11+
-- MySQL 8.0 (ou Aiven MySQL)
-- Docker & Docker Compose (optionnel)
+- Aiven MySQL, Firefox
+- railway(déploiement)
+- Docker & Docker Compose
 - Navigateur Chrome ou Firefox
 
 ## Installation locale
@@ -38,5 +38,5 @@ text
 ### 1. Cloner le dépôt
 
 ```bash
-git clone https://github.com/votre-username/luciole.git
+git clone https://github.com/arin39144-coder/luciole.git
 cd luciole
