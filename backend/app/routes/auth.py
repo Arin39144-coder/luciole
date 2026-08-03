@@ -40,16 +40,16 @@ def register():
     ).first():
         return jsonify({"error": "Nom d'utilisateur ou email déjà utilisé."}), 409
 
-    user = User(
-        username=username,
-        email=email,
-        password_hash=hash_password(password),
-    )
+    user = User(username=username, email=email, password_hash=hash_password(password))
     db.session.add(user)
-    db.session.flush()
-
-    goal = UserGoal(user_id=user.id, daily_limit=120)
-    db.session.add(goal)
+    db.session.flush()  # pour obtenir l'id
+    
+    # Vérifier si un objectif existe déjà (pour éviter la duplication)
+    existing_goal = UserGoal.query.filter_by(user_id=user.id).first()
+    if not existing_goal:
+        goal = UserGoal(user_id=user.id, daily_limit=120)
+        db.session.add(goal)
+    
     db.session.commit()
 
     token = create_access_token(identity=str(user.id))
